@@ -24,12 +24,12 @@ jobs:
 
       - name: Navigate to Kernel Source Directory
         run: |
-          cd kernel_source_directory  # Change this to your actual kernel source directory
+          cd kernel/  # Change this to your actual kernel source directory
           ls -la   # Debugging: Check if files exist
 
       - name: Build Kernel
         run: |
-          cd kernel_source_directory  # Change this to your actual kernel source directory
+          cd kernel/  # Change this to your actual kernel source directory
           make clean && make mrproper
           make defconfig
           make -j$(nproc)
