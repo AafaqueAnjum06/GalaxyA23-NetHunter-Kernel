@@ -12,6 +12,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Verify Files in Root Directory
+        run: ls -la  # Debugging: Check if the kernel source exists
+
+      - name: Clone Kernel Source
+        run: |
+          git clone --depth=1 https://github.com/AafaqueAnjum06/GalaxyA23-NetHunter-Kernel.git kernel
+          ls -la kernel  # Debugging: Check if files exist inside kernel directory
+
       - name: Install dependencies
         run: |
           sudo apt update
@@ -22,14 +30,9 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
 
-      - name: Navigate to Kernel Source Directory
-        run: |
-          cd kernel/  # Change this to your actual kernel source directory
-          ls -la   # Debugging: Check if files exist
-
       - name: Build Kernel
         run: |
-          cd kernel/  # Change this to your actual kernel source directory
+          cd kernel  # Ensure we are in the right directory
           make clean && make mrproper
           make defconfig
           make -j$(nproc)
