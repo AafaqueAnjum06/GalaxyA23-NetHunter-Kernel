@@ -4,46 +4,43 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Verify Root Directory
+      - name: Install Dependencies
         run: |
-          echo "Listing contents of root directory:"
-          ls -la
+          sudo apt update
+          sudo apt install -y bc bison flex libssl-dev make clang gcc libc6-dev libncurses-dev ccache git python3 python3-pip
 
       - name: Clone Kernel Source
         run: |
           git clone --depth=1 https://github.com/AafaqueAnjum06/GalaxyA23-NetHunter-Kernel.git kernel
-          echo "Listing contents of kernel directory after cloning:"
-          ls -la kernel
+          cd kernel
 
-      - name: Install dependencies
+      - name: Setup Build Environment
         run: |
-          sudo apt update
-          sudo apt install -y gcc-aarch64-linux-gnu make bc flex bison
-
-      - name: Set up environment
-        run: |
+          cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
+          export PATH=/usr/bin:$PATH
 
       - name: Build Kernel
         run: |
-          if [ -d "kernel" ]; then
-            echo "Kernel directory found. Proceeding..."
-            cd kernel
-            ls -la  # List contents of kernel directory
-            make clean && make mrproper
-            make defconfig
-            make -j$(nproc)
-          else
-            echo "Error: Kernel directory not found!"
-            exit 1
-          fi
+          cd kernel
+          make clean && make mrproper
+          make defconfig
+          make -j$(nproc)
+
+      - name: Upload Kernel Image
+        uses: actions/upload-artifact@v3
+        with:
+          name: Kernel
+          path: kernel/arch/arm64/boot/Image.gz-dtb
 
