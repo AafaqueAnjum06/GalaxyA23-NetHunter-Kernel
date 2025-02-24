@@ -32,7 +32,7 @@ jobs:
 
       - name: Build Kernel
         run: |
-          cd kernel  # Ensure we are in the right directory
+          cd kernel_source  # Ensure we are in the right directory
           make clean && make mrproper
           make defconfig
           make -j$(nproc)
