@@ -13,7 +13,7 @@ jobs:
     - name: Set up environment
       run: |
         sudo apt update
-        sudo apt install -y bc bison build-essential ccache curl flex g++-multilib \
+        sudo apt install -y bc bison build-essential ccache curl flex \
           g++-aarch64-linux-gnu g++-arm-linux-gnueabi g++-arm-linux-gnueabihf \
           git libssl-dev libncurses5-dev python3 rsync unzip xz-utils zlib1g-dev
 
