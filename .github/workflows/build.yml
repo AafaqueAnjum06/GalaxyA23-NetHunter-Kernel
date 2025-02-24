@@ -1,32 +1,38 @@
-name: Kernel Build
+name: Build Kernel
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # Explicitly set Ubuntu version
 
     steps:
-    - name: Checkout source
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Set up environment
+    - name: Debug System Info
+      run: |
+        echo "Kernel Info:"
+        uname -a
+        echo "Ubuntu Version:"
+        lsb_release -a
+        echo "GCC Version:"
+        gcc --version
+        echo "Clang Version:"
+        clang --version
+
+    - name: Install Dependencies
       run: |
         sudo apt update
-        sudo apt install -y bc bison build-essential ccache curl flex \
-          g++-aarch64-linux-gnu g++-arm-linux-gnueabi g++-arm-linux-gnueabihf \
-          git libssl-dev libncurses5-dev python3 rsync unzip xz-utils zlib1g-dev
-
-    - name: Set up Kernel Source
-      run: |
-        ls -la  # Check files to confirm correct directory
-        cd kernel  # Change this to the correct subdirectory if needed
+        sudo apt install -y bc bison flex libssl-dev make gcc clang llvm ccache git
 
     - name: Build Kernel
       run: |
-        cd kernel  # Change this if needed
+        make clean && make mrproper
         export ARCH=arm64
-        export SUBARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
         make defconfig
         make -j$(nproc)
@@ -35,5 +41,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: compiled-kernel
-        path: kernel/arch/arm64/boot/Image.gz-dtb  # Adjust path if needed
+        path: arch/arm64/boot/Image
 
