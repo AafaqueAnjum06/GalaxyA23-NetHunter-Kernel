@@ -1,0 +1,32 @@
+name: Kernel Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Set up environment
+      run: |
+        sudo apt update
+        sudo apt install -y bc bison build-essential ccache curl flex g++-multilib \
+          gcc gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi gcc-arm-linux-gnueabihf \
+          git libssl-dev libncurses5-dev python3 rsync unzip xz-utils zlib1g-dev
+
+    - name: Build Kernel
+      run: |
+        export ARCH=arm64
+        export SUBARCH=arm64
+        export CROSS_COMPILE=aarch64-linux-gnu-
+        make defconfig
+        make -j$(nproc)
+
+    - name: Upload Kernel Image
+      uses: actions/upload-artifact@v3
+      with:
+        name: compiled-kernel
+        path: arch/arm64/boot/Image.gz-dtb
+
