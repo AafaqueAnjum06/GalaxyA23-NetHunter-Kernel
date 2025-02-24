@@ -26,14 +26,14 @@ jobs:
 
       - name: Setup Build Environment
         run: |
-          cd kernel
+          cd kernel_source
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           export PATH=/usr/bin:$PATH
 
       - name: Build Kernel
         run: |
-          cd kernel
+          cd kernel_source
           make clean && make mrproper
           make defconfig
           make -j$(nproc)
