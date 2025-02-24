@@ -12,13 +12,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify Files in Root Directory
-        run: ls -la  # Debugging: Check if the kernel source exists
+      - name: Verify Root Directory
+        run: |
+          echo "Listing contents of root directory:"
+          ls -la
 
       - name: Clone Kernel Source
         run: |
           git clone --depth=1 https://github.com/AafaqueAnjum06/GalaxyA23-NetHunter-Kernel.git kernel
-          ls -la kernel  # Debugging: Check if files exist inside kernel directory
+          echo "Listing contents of kernel directory after cloning:"
+          ls -la kernel
 
       - name: Install dependencies
         run: |
@@ -32,8 +35,15 @@ jobs:
 
       - name: Build Kernel
         run: |
-          cd kernel  # Ensure we are in the right directory
-          make clean && make mrproper
-          make defconfig
-          make -j$(nproc)
+          if [ -d "kernel" ]; then
+            echo "Kernel directory found. Proceeding..."
+            cd kernel
+            ls -la  # List contents of kernel directory
+            make clean && make mrproper
+            make defconfig
+            make -j$(nproc)
+          else
+            echo "Error: Kernel directory not found!"
+            exit 1
+          fi
 
