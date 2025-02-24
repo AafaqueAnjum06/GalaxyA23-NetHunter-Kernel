@@ -17,8 +17,14 @@ jobs:
           g++-aarch64-linux-gnu g++-arm-linux-gnueabi g++-arm-linux-gnueabihf \
           git libssl-dev libncurses5-dev python3 rsync unzip xz-utils zlib1g-dev
 
+    - name: Set up Kernel Source
+      run: |
+        ls -la  # Check files to confirm correct directory
+        cd kernel  # Change this to the correct subdirectory if needed
+
     - name: Build Kernel
       run: |
+        cd kernel  # Change this if needed
         export ARCH=arm64
         export SUBARCH=arm64
         export CROSS_COMPILE=aarch64-linux-gnu-
@@ -29,5 +35,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: compiled-kernel
-        path: arch/arm64/boot/Image.gz-dtb
+        path: kernel/arch/arm64/boot/Image.gz-dtb  # Adjust path if needed
 
